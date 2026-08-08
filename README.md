@@ -1,4 +1,4 @@
-# GUB STUDENT-PORTAL
+# Green University of Bangladesh Student Portal
 
 # Project 3: Enterprise High Availability Student Portal Platform
 
