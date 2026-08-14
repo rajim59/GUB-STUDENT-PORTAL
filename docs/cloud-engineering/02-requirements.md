@@ -92,3 +92,5 @@ Lab Project-এ $100 Azure Credit-এর সীমাবদ্ধতার ক�
 | RTO < 5 min | 15–60 min (Database Restore) | < 5 min (Auto-Failover Group) |
 | RPO < 1 min | 5–10 min (Backup Log) | < 1 min (Active Geo-Replication) |
 | Concurrent Users 20k+ | Scaled-down Load Test (200–500) | Full-scale Load Test (20k) |
+
+---
