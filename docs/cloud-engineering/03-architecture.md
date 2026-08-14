@@ -2,10 +2,11 @@
 
 ## 1. Architecture Overview
 
-এই ডকুমেন্টে **Student Portal Platform**-এর Cloud Architecture বিস্তারিত বর্ণনা করা হয়েছে।  
+এই ডকুমেন্টে **Student Portal Platform**-এর Cloud Architecture বিস্তারিত বর্ণনা করা হয়েছে।
+
 Architecture-টি **Microsoft Azure**-এ ডিজাইন করা হয়েছে এবং **High Availability, Auto Scaling, Zero Downtime Deployment, Security, Monitoring এবং Cost Optimization** — এই সবগুলো Business Requirement পূরণের জন্য তৈরি।
 
-Architecture-টি সম্পূর্ণ **Infrastructure as Code (Terraform)** দিয়ে Provision করা হয় এবং Demo-র সময় চালু রেখে বাকি সময় বন্ধ রাখা হয় (Cost Control)।
+Architecture-টি সম্পূর্ণ **Infrastructure as Code (Terraform)** দিয়ে Provision করা হয় এবং Demo-র সময় চালু রেখে বাকি সময় বন্ধ রাখা হয় (Cost Control).
 
 ---
 
@@ -13,14 +14,13 @@ Architecture-টি সম্পূর্ণ **Infrastructure as Code (Terraform
 
 নিচে Architecture Diagram-টি দেখানো হলো:
 
-🧩 Mermaid Diagram Code Blocks
+### 1. High-Level Architecture (Student → App → DB)
 
-1. High-Level Architecture (Student → App → DB)
-
+```mermaid
 flowchart TD
     A[Student Browser] -->|HTTPS TLS 1.2| B[Internet]
     B --> C[Azure App Service]
-    
+
     subgraph C[Azure App Service - Standard S1]
         direction TB
         C1[Production Slot - 2+ Instances]
@@ -29,18 +29,20 @@ flowchart TD
         C4[Stateless Application]
         C5[Managed Identity]
     end
-    
+
     C --> D[Virtual Network - Subnet + Service Endpoint]
     D --> E[Azure SQL Database Serverless]
-    
+
     C --> F[Azure Key Vault]
     F -->|Secrets| C
-    
+
     C --> G[Application Insights + Log Analytics]
     G -->|Metrics & Logs| H[Azure Monitor / Alerts]
+```
 
-2. CI/CD Pipeline (GitHub Actions + Deployment Slots)
+### 2. CI/CD Pipeline (GitHub Actions + Deployment Slots)
 
+```mermaid
 flowchart LR
     A[Developer Push to GitHub] --> B[GitHub Actions Trigger]
     B --> C[Build & Unit Test]
@@ -50,40 +52,44 @@ flowchart LR
     F -->|Pass| G[Swap Staging ↔ Production]
     F -->|Fail| H[Pipeline Stop + Alert]
     G --> I[Zero Downtime Deployment Complete]
+```
 
+### 3. Auto Scaling Flow
 
-3. Auto Scaling Flow
-
+```mermaid
 flowchart TD
     A[Traffic Load Increases] --> B{CPU > 70% for 5 min?}
     B -->|Yes| C[Add 1 Instance]
     C --> D[Load Balancer Distributes Traffic]
     D --> E[More Capacity]
     B -->|No| F[Keep Current Instances]
-    
+
     G[Traffic Load Decreases] --> H{CPU < 40% for 10 min?}
     H -->|Yes| I[Remove 1 Instance]
     I --> J[Cost Optimization]
+```
 
+### 4. Disaster Recovery (Lab + Production Design)
 
-4. Disaster Recovery (Lab + Production Design)
-
+```mermaid
 flowchart TD
     subgraph Lab_Implementation["Lab Implementation"]
         A[Azure SQL Database - Serverless] --> B[Automated Backups]
         B --> C[Point-in-Time Restore]
         C --> D[Recover Database]
     end
-    
+
     subgraph Production_Design["Production Design"]
         E[Primary Region - Southeast Asia] -->|Auto-Failover Group| F[Secondary Region - East Asia]
         F --> G[Readable Secondary Database]
         E --> H[Traffic Manager]
         H -->|Failover| F
     end
+```
 
-5. Cost Management On/Off Strategy
+### 5. Cost Management On/Off Strategy
 
+```mermaid
 flowchart LR
     A[Demo Start] --> B[terraform apply]
     B --> C[Resources Running]
@@ -91,64 +97,73 @@ flowchart LR
     D --> E[Demo End]
     E --> F[terraform destroy]
     F --> G[Resources Deleted - Cost Zero]
-
 ```
-                        +-------------------+
-                        |    Student (Internet) |
-                        +-------------------+
-                                |
-                                | HTTPS (TLS 1.2+)
-                                v
-                        +-------------------+
-                        |  Azure Traffic Manager? (Production Design)
-                        |  Lab: Direct to App Service
-                        +-------------------+
-                                |
-                                v
-                +-----------------------------------+
-                | Azure App Service (Standard S1)   |
-                | - Production Slot (Min 2 Instances)|
-                | - Staging Slot (Deployment)        |
-                | - Auto Scaling Rules               |
-                | - Stateless Application            |
-                | - Managed Identity (System)        |
-                +-----------------------------------+
-                        |                |
-                        | Regional VNet Integration
-                        | (Subnet with Service Endpoint)
-                        v
-                +-----------------------------------+
-                | Virtual Network (VNet)            |
-                | - Subnet: app-subnet              |
-                | - Service Endpoint: Microsoft.Sql |
-                +-----------------------------------+
-                        |
-                        v
-                +-----------------------------------+
-                | Azure SQL Database (Serverless)   |
-                | - Auto-Pause                       |
-                | - Built-in HA (99.99%)            |
-                | - Automatic Backups + PITR        |
-                | - Connection Pooling (App Side)   |
-                +-----------------------------------+
-                        |
-                        | Secrets
-                        v
-                +-------------------+
-                | Azure Key Vault  |
-                | - DB Connection String |
-                | - JWT Signing Key      |
-                +-------------------+
-                        |
-                        | Monitoring
-                        v
-                +-----------------------------------+
+
+### Detailed Infrastructure Diagram
+
+```text
+                        +-------------------------+
+                        | Student (Internet)      |
+                        +-------------------------+
+                                  |
+                                  | HTTPS (TLS 1.2+)
+                                  v
+                        +-------------------------+
+                        | Azure Traffic Manager?  |
+                        | Production Design       |
+                        | Lab: Direct App Service |
+                        +-------------------------+
+                                  |
+                                  v
+
+                +--------------------------------------+
+                | Azure App Service (Standard S1)      |
+                | - Production Slot (Min 2 Instances) |
+                | - Staging Slot (Deployment)         |
+                | - Auto Scaling Rules                |
+                | - Stateless Application             |
+                | - Managed Identity (System)         |
+                +--------------------------------------+
+                          |
+                          | Regional VNet Integration
+                          | (Subnet with Service Endpoint)
+                          v
+
+                +--------------------------------------+
+                | Virtual Network (VNet)              |
+                | - Subnet: app-subnet               |
+                | - Service Endpoint: Microsoft.Sql  |
+                +--------------------------------------+
+                          |
+                          v
+
+                +--------------------------------------+
+                | Azure SQL Database (Serverless)     |
+                | - Auto-Pause                        |
+                | - Built-in HA (99.99%)             |
+                | - Automatic Backups + PITR         |
+                | - Connection Pooling (App Side)    |
+                +--------------------------------------+
+                          |
+                          | Secrets
+                          v
+
+                +----------------------------+
+                | Azure Key Vault            |
+                | - DB Connection String     |
+                | - JWT Signing Key          |
+                +----------------------------+
+                          |
+                          | Monitoring
+                          v
+
+                +--------------------------------------+
                 | Application Insights + Log Analytics |
-                | - Live Metrics                      |
+                | - Live Metrics                       |
                 | - Availability Ping Test            |
                 | - Alert Rules                        |
                 | - Dashboard                          |
-                +-----------------------------------+
+                +--------------------------------------+
 
         Infrastructure as Code (Terraform)
         Deployment / DevOps (GitHub Actions)
