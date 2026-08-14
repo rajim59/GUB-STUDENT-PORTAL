@@ -1,4 +1,3 @@
-```markdown
 # 04. Cost Management
 
 ## 1. Objective
