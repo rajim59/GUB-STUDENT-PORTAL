@@ -1,8 +1,3 @@
-নিচে `docs/04-cost-management.md` ফাইলটির জন্য সম্পূর্ণ Markdown Content দেওয়া হলো।  
-এটি আপনার Cost Management Strategy-এর পূর্ণাঙ্গ Document হিসেবে ব্যবহার করা যাবে।
-
----
-
 ```markdown
 # 04. Cost Management
 
@@ -296,14 +291,6 @@ resource "azurerm_consumption_budget_resource_group" "lab_budget" {
 | Database Data Strategy | Delete + Seed Scripts (Option A) |
 
 ---
-
-## 14. Next Steps
-
-- বাস্তবে Terraform Modules তৈরি করে Deployment Automation test করা।
-- Azure Policy Assign করা।
-- Budget Alert চালু করা।
-- Demo-র পরে Cost Report তৈরি করে `05-testing-and-verification.md`-এ সংরক্ষণ করা।
-```
 
 ---
 

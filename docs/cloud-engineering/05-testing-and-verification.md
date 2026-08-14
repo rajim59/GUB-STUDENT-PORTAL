@@ -248,10 +248,3 @@ Testing-এর মধ্যে থাকবে:
 
 ---
 
-## 8. Next Steps
-
-- Terraform দিয়ে Environment Deploy করা।
-- প্রতিটি Test Execute করা।
-- Evidence Screenshot ও Log সংরক্ষণ করা।
-- Test Results Table Update করা।
-- `06-deployment-and-operations.md`-এ Deployment Runbook তৈরি করা।

@@ -1,9 +1,3 @@
-নিচে `docs/06-deployment-and-operations.md` ফাইলটির জন্য সম্পূর্ণ Markdown Content দেওয়া হলো।  
-এটি Deployment এবং Operations-এর সম্পূর্ণ Runbook হিসেবে ব্যবহার করা যাবে।
-
----
-
-```markdown
 # 06. Deployment and Operations
 
 ## 1. Objective
