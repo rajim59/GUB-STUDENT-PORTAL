@@ -345,4 +345,4 @@ flowchart LR
 | Infrastructure as Code | Terraform |
 | Cost Optimization | Resource Group On/Off, Budget, Policies, Auto-Pause |
 
----
+--- 
