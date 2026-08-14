@@ -290,9 +290,3 @@ resource "azurerm_consumption_budget_resource_group" "lab_budget" {
 | Database Data Strategy | Delete + Seed Scripts (Option A) |
 
 ---
-
----
-
-এটি হলো **চতুর্থ ডকুমেন্টেশন ফাইল: `04-cost-management.md`**।  
-এখন আমরা চাইলে **`05-testing-and-verification.md`** তৈরি করতে পারি।  
-আপনি প্রস্তুত থাকলে শুরু করি।
